@@ -24,18 +24,19 @@ var burgerBiPotato = new Hamburger(Hamburger.SIZE_LARGE, Hamburger.STUFFING_POTA
 
 ////////////////////////////
 //салаты
-function Salad (salad) {
-  this.name = "Salad " + salad.name
-  this.price = salad.price;
-  this.calories = salad.calories;
+function Salad (salad, gram) {
+  var factor = gram/100;
+  this.name = gram + " grams of Salad " + salad.name
+  this.price = salad.price*factor;
+  this.calories = salad.calories*factor;
 }
 
 Salad.CESAR = {name: "Cesar", price: 100, calories: 20};
 Salad.RUSSIANSALAD = {name: "Russian", price: 50, calories: 80};
 
 //меню салатов
-var saladCesar = new Salad(Salad.CESAR);
-var saladRussianSalad = new Salad(Salad.RUSSIANSALAD);
+var saladCesar150 = new Salad(Salad.CESAR, 150);
+var saladRussianSalad200 = new Salad(Salad.RUSSIANSALAD, 200);
 
 ////////////////////////////
 //напитки
@@ -55,14 +56,14 @@ var drinkCoffee = new Drink(Drink.COFFEE);
 
 
 ////////////////////////////
-//заказ
+//Конструктор заказа
 function Order (...items) {
   this.items = items;
   this.payment = false;
 }
 
 //новый заказ
-var order = new Order (burgerSmCheese, burgerBiSalad, saladRussianSalad, drinkCola);
+var order = new Order (burgerSmCheese, burgerBiSalad, saladRussianSalad200, drinkCola);
 
 //добавить позицию в заказ
 Order.prototype.addPosition = function(item) {
@@ -118,8 +119,8 @@ Order.prototype.getOrderCalories = function () {
 //узнать заказ
 Order.prototype.getOrder = function() {
   if (this.items.length == 0) {
-    console.log("Your order is empty")
-  } else if (this.items.length > 0) {
+    return("Your order is empty")
+  }
   var orderText = "In your order: ";
   for (var i=0;i<this.items.length;i++) {
     if (i !== this.items.length - 1) {
@@ -128,34 +129,30 @@ Order.prototype.getOrder = function() {
       orderText += this.items[i].name + "."
     }
   }
-  console.log(orderText);
-  }
+  return(orderText);
+
 }
 
-
-
-
-
 console.log("Подробности заказа");
-order.getOrder();
+console.log(order.getOrder());
 order.getOrderPrice();
 order.getOrderCalories();
 
 console.log("Добавляем новую позицию");
-order.addPosition(burgerBiPotato);
-order.getOrder();
+order.addPosition(saladCesar150);
+console.log(order.getOrder());
 order.getOrderPrice();
 
 console.log("Удаляем позицию");
-order.removePosition(burgerBiSalad);
-order.getOrder();
+order.removePosition(saladRussianSalad200);
+console.log(order.getOrder());
 order.getOrderPrice();
 
-console.log("Оплачиваем заказ (При подтверждении, последующие добавления и удаления не будут работать. При отмене можно сработает добавление и удаление)");
+console.log("Оплачиваем заказ (При подтверждении, последующие добавления и удаления не будут работать. При отмене последующие добавления и удаления сработают)");
 order.payForTheOrder()
 
 console.log("Пробуем добавить позицию в оплаченный заказ");
-order.addPosition(burgerBiPotato);
+order.addPosition(burgerBiSalad);
 console.log("Пробуем удалить позицию из оплаченного заказа");
 order.removePosition(drinkCola);
-order.getOrder();
+console.log(order.getOrder());
